@@ -11,7 +11,7 @@ CONFIG += debug
 
 
 
-SOURCES = system-monitor.cpp \
+SOURCES = system_monitor.cpp \
           ControlCenter.cpp \
           LedControl.cpp \
           HddMonitor.cpp \
@@ -24,6 +24,6 @@ HEADERS =  \
           NetworkMonitor.h\
           NetworkStatusProxy.h
 
-TARGET = system-monitor
+TARGET = system_monitor
 
 
