@@ -26,4 +26,8 @@ HEADERS =  \
 
 TARGET = system_monitor
 
+target.path = /usr/bin
+
+INSTALLS += target
+
 
