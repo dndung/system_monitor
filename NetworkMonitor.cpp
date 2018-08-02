@@ -4,6 +4,8 @@
 NetworkMonitor::NetworkMonitor()
 {
   qDebug() << "New Network monitor object";
+  qDBusRegisterMetaType<PropertiesList>();
+  qDBusRegisterMetaType<QStringList>();
   netStatusProxy = new NetworkStatusProxy(
                                 "org.freedesktop.network1",
                                 "/org/freedesktop/network1",
@@ -12,8 +14,7 @@ NetworkMonitor::NetworkMonitor()
   if (netStatusProxy->isValid()) {
     bool ret;
     
-    qDBusRegisterMetaType<QMap<QString, QVariant>>();
-    qDBusRegisterMetaType<QStringList>();
+    /*
     ret = QDBusConnection::systemBus().connect(
                                         "org.freedesktop.network1",
                                         "/org/freedesktop/network1",
@@ -21,7 +22,9 @@ NetworkMonitor::NetworkMonitor()
                                         "PropertiesChanged",
                                         this, 
                                         SLOT(onPropertiesChanged(QString,QMap<QString, QVariant>,QStringList)));
-
+    */
+    ret = connect(netStatusProxy, &NetworkStatusProxy::PropertiesChanged,
+                  this, &NetworkMonitor::onPropertiesChanged);
     if (ret) {
       qDebug() << "CONNECTED";
 
@@ -70,8 +73,13 @@ eNetworkStatus getNetworkStatusFromStr(QString netStatusStr) {
   return netStatus;
 }
 
+/*
 void NetworkMonitor::onPropertiesChanged(QString interface,
                         QMap<QString, QVariant> changedProperties,
+                        QStringList invalidated_properties)
+*/
+void NetworkMonitor::onPropertiesChanged(QString interface,
+                        PropertiesList changedProperties,
                         QStringList invalidated_properties)
 {
   Q_UNUSED(interface);

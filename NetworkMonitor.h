@@ -10,6 +10,7 @@
 #include <QVariant>
 #include <QList>
 
+#include "PropertyList.h"
 #include "NetworkStatusProxy.h"
 
 enum eNetworkStatus {
@@ -37,8 +38,13 @@ class NetworkMonitor : public QObject {
     Q_SIGNALS:
     void networkChanged(eNetworkStatus netStatus);
   public Q_SLOTS:
+    /*
     void onPropertiesChanged(QString interface,
                         QMap<QString, QVariant> changedProperties,
+                        QStringList invalidated_properties);
+    */
+    void onPropertiesChanged(QString interface,
+                        PropertiesList changedProperties,
                         QStringList invalidated_properties);
 
   private:
