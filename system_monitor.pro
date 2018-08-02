@@ -16,13 +16,17 @@ SOURCES = system_monitor.cpp \
           LedControl.cpp \
           HddMonitor.cpp \
           NetworkMonitor.cpp \
-          NetworkStatusProxy.cpp
+          NetworkStatusProxy.cpp \
+          SystemStatus.cpp \
+          SystemStatusAdaptor.cpp
 HEADERS =  \
           ControlCenter.h \
           LedControl.h \
           HddMonitor.h\
           NetworkMonitor.h\
-          NetworkStatusProxy.h
+          NetworkStatusProxy.h \
+          SystemStatus.h \
+          SystemStatusAdaptor.h 
 
 TARGET = system_monitor
 

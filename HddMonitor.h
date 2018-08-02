@@ -7,7 +7,7 @@
 
 enum eHddStatus {
   HDD_STATUS_OFF = 0,
-  HDD_STATUS_NOT_FULL = 1,
+  HDD_STATUS_NORMAL = 1,
   HDD_STATUS_FULL = 2
 };
 class HddMonitor : public QObject

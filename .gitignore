@@ -50,3 +50,4 @@ target_wrapper.*
 # QtCreator CMake
 CMakeLists.txt.user*
 system-monitor
+system_monitor

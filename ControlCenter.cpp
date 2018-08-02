@@ -2,6 +2,11 @@
 
 #include <QDebug>
 
+#include <QDBusConnection>
+
+#define SYSTEM_STATUS_SERVICE "vp9.system_status"
+#define SYSTEM_STATUS_PATH "/vp9/system_status"
+
 ControlCenter::ControlCenter() :
   speaker("/sys/devices/platform/speakerled/leds/led-speaker/brightness"),
   networkLed("/sys/devices/platform/networkled/leds/led-network/brightness"),
@@ -11,12 +16,20 @@ ControlCenter::ControlCenter() :
 {
   // connect signals
 
+  sysStatus = new SystemStatus(0,0);
+  sysStatusAdaptor = new SystemStatusAdaptor(sysStatus);
+
   connect(&networkMonitor, &NetworkMonitor::networkChanged,
           this , &ControlCenter::handleNetworkChange);
   connect(&hddMonitor, &HddMonitor::newHddStatusEvent,
           this, &ControlCenter::handleHddChange);
 
-  qDebug() << "network led slot connected";
+  connect(&networkMonitor, &NetworkMonitor::networkChanged,
+          sysStatus , &SystemStatus::setNetworkStatus);
+  connect(&hddMonitor, &HddMonitor::newHddStatusEvent,
+          sysStatus , &SystemStatus::setHddStatus);
+
+  qDebug() << "signals and slots connected";
 }
 
 ControlCenter::~ControlCenter()
@@ -26,15 +39,32 @@ ControlCenter::~ControlCenter()
           this , &ControlCenter::handleNetworkChange);
   disconnect(&hddMonitor, &HddMonitor::newHddStatusEvent,
           this, &ControlCenter::handleHddChange);
-  qDebug() << "network led slot disconnected";
+  disconnect(&networkMonitor, &NetworkMonitor::networkChanged,
+          sysStatus , &SystemStatus::setNetworkStatus);
+  disconnect(&hddMonitor, &HddMonitor::newHddStatusEvent,
+          sysStatus , &SystemStatus::setHddStatus);
 
 }
 void ControlCenter::init()
 {
   eNetworkStatus netStatus  = networkMonitor.getNetworkStatus();
   handleNetworkChange(netStatus);
+  sysStatus->setNetworkStatus(netStatus);
   eHddStatus hddStatus = hddMonitor.getHddStatus();
   handleHddChange(hddStatus);
+  sysStatus->setHddStatus(hddStatus);
+
+  QDBusConnection connection = QDBusConnection::systemBus();
+  if (!connection.interface()->isServiceRegistered(SYSTEM_STATUS_SERVICE)){
+    if (!connection.registerService(SYSTEM_STATUS_SERVICE))
+    {
+      qDebug() << "Could not register system status service";
+    }
+    if (!connection.registerObject(SYSTEM_STATUS_PATH, sysStatus))
+    {
+      qDebug() << "Could not register system status object";
+    }
+  }
 }
 
 void ControlCenter::handleNetworkChange(eNetworkStatus netStatus)
@@ -56,7 +86,7 @@ void ControlCenter::handleHddChange(eHddStatus hddStatus)
   if (hddStatus == HDD_STATUS_OFF) {
     qDebug() << "hdd changed: OFF ";
     hddLed.turnOff();
-  } else if (hddStatus == HDD_STATUS_NOT_FULL) {
+  } else if (hddStatus == HDD_STATUS_NORMAL) {
     qDebug() << "hdd changed: NOT FULL ";
     hddLed.turnOn();
   } else {

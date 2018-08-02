@@ -5,6 +5,8 @@
 #include "LedControl.h"
 #include "NetworkMonitor.h"
 #include "HddMonitor.h"
+#include "SystemStatus.h"
+#include "SystemStatusAdaptor.h"
 
 #include <QObject>
 
@@ -25,8 +27,12 @@ class ControlCenter : public QObject
     LedControl sysLed;
     LedControl opLed;
 
+
     NetworkMonitor networkMonitor;
     HddMonitor hddMonitor;
+
+    SystemStatus *sysStatus;
+    SystemStatusAdaptor *sysStatusAdaptor;
 
   private Q_SLOTS:
       void handleNetworkChange(eNetworkStatus netStatus);

@@ -26,16 +26,16 @@ void HddMonitor::checkHddStatus()
     if (hddStatus == HDD_STATUS_FULL) {
       qDebug() << "Emit FULL";
       emit newHddStatusEvent(HDD_STATUS_FULL);
-    } else if  (hddStatus == HDD_STATUS_NOT_FULL) {
+    } else if  (hddStatus == HDD_STATUS_NORMAL) {
       qDebug() << "Emit ON";
-      emit newHddStatusEvent(HDD_STATUS_NOT_FULL);
+      emit newHddStatusEvent(HDD_STATUS_NORMAL);
     } else {
       //qDebug() << "Still OFF";
     }
   } else if (mCurrentHddStatus == HDD_STATUS_FULL) {
-    if (hddStatus == HDD_STATUS_NOT_FULL) {
+    if (hddStatus == HDD_STATUS_NORMAL) {
       qDebug() << "Emit NOT FULL";
-      emit newHddStatusEvent(HDD_STATUS_NOT_FULL);
+      emit newHddStatusEvent(HDD_STATUS_NORMAL);
     } else if  (hddStatus == HDD_STATUS_OFF) {
       qDebug() << "Emit OFF";
       emit newHddStatusEvent(HDD_STATUS_OFF);
@@ -86,7 +86,7 @@ eHddStatus HddMonitor::getHddStatus()
     //qDebug() << "Rate: " << rate;
       
     if (rate >= mThreshold) {
-      return HDD_STATUS_NOT_FULL;
+      return HDD_STATUS_NORMAL;
     } else {
       return HDD_STATUS_FULL;
     }
